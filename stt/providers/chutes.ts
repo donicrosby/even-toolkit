@@ -11,7 +11,6 @@ import { sttLog } from '../debug';
 
 const CHUTES_API_URL = 'https://chutes-whisper-large-v3.chutes.ai/transcribe';
 
-// Whisper hallucinates these on silence/low audio — filter them out
 const HALLUCINATION_PATTERNS = [
   /sottotitoli/i,
   /amara\.org/i,
@@ -36,7 +35,6 @@ const HALLUCINATION_PATTERNS = [
   /^\s*$/,
 ];
 
-/** Common phrases Whisper appends at the end of audio — strip them */
 const TRAILING_HALLUCINATIONS = [
   /\s*al prossimo episodio\.?\s*$/i,
   /\s*alla prossima\.?\s*$/i,
@@ -50,7 +48,6 @@ const TRAILING_HALLUCINATIONS = [
   /\s*bis zum nächsten mal\.?\s*$/i,
 ];
 
-/** Check if text is just dots, punctuation, or too short to be real speech */
 function isJunkTranscription(text: string): boolean {
   const cleaned = text.replace(/[\s.,!?;:…\-–—]+/g, '');
   if (cleaned.length === 0) return true;
@@ -58,7 +55,6 @@ function isJunkTranscription(text: string): boolean {
   return HALLUCINATION_PATTERNS.some(p => p.test(text));
 }
 
-/** Strip trailing hallucination phrases from otherwise valid text */
 function cleanTranscription(text: string): string {
   let result = text;
   for (const pattern of TRAILING_HALLUCINATIONS) {
@@ -67,7 +63,6 @@ function cleanTranscription(text: string): string {
   return result.trim();
 }
 
-/** Convert Float32 audio to base64-encoded PCM16 */
 function audioToBase64(audio: Float32Array): string {
   const int16 = float32ToPcm16(audio);
   const binaryString = String.fromCharCode.apply(null, Array.from(new Uint8Array(int16.buffer)));
@@ -110,20 +105,12 @@ export class ChutesProvider implements STTProvider {
   start(): void {
     this.setState('listening');
   }
-  }
 
   stop(): void {
     this.setState('idle');
   }
 
   abort(): void {
-    this.setState('idle');
-  };
-
-  dispose(): void {
-    this.transcriptCbs = [];
-    this.stateCbs = [];
-    this.errorCbs = [];
     this.setState('idle');
   }
 
@@ -165,7 +152,6 @@ export class ChutesProvider implements STTProvider {
 
       const json = (await response.json()) as { text: string };
 
-      // Filter and clean Whisper hallucinations
       const rawText = json.text?.trim() ?? '';
       const text = cleanTranscription(rawText);
       const isJunk = isJunkTranscription(text);
@@ -180,7 +166,6 @@ export class ChutesProvider implements STTProvider {
       this.setState('idle');
       return transcript;
     } catch (err: any) {
-      // If already handled (HTTP error), just rethrow
       if (this._state === 'error') throw err;
 
       const sttError: STTError = {
@@ -208,13 +193,6 @@ export class ChutesProvider implements STTProvider {
     this.errorCbs.push(cb);
     return () => { this.errorCbs = this.errorCbs.filter((c) => c !== cb); };
   }
-
-  onError(cb: (e: STTError) => void): () => void {
-    this.errorCbs.push(cb);
-    return () => { this.errorCbs = this.errorCbs.filter((c) => c !== cb); };
-  }
-
-  // ── Private ──
 
   private setState(s: STTState): void {
     if (this._state === s) return;

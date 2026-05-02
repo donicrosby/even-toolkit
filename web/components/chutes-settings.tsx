@@ -38,7 +38,7 @@ export function ChutesSettings({ className }: ChutesSettingsProps) {
           <Input
             type="password"
             value={apiKey}
-            onChange={setApiKey}
+            onChange={(e) => setApiKey(e.currentTarget.value)}
             placeholder="cpk_..."
             className="w-full"
           />
