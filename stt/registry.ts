@@ -14,6 +14,10 @@ export async function createProvider(type: string): Promise<STTProvider> {
       const { DeepgramProvider } = await import('./providers/deepgram');
       return new DeepgramProvider();
     }
+    case 'chutes': {
+      const { ChutesProvider } = await import('./providers/chutes');
+      return new ChutesProvider();
+    }
     default:
       throw new Error(`Unknown STT provider: ${type}`);
   }

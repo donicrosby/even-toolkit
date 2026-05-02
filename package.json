@@ -213,6 +213,10 @@
       "types": "./dist/web/components/settings-group.d.ts",
       "import": "./dist/web/components/settings-group.js"
     },
+    "./web/chutes-settings": {
+      "types": "./dist/web/components/chutes-settings.d.ts",
+      "import": "./dist/web/components/chutes-settings.js"
+    },
     "./web/category-filter": {
       "types": "./dist/web/components/category-filter.d.ts",
       "import": "./dist/web/components/category-filter.js"
@@ -372,11 +376,16 @@
     "./stt/providers/deepgram": {
       "types": "./dist/stt/providers/deepgram.d.ts",
       "import": "./dist/stt/providers/deepgram.js"
+    },
+    "./stt/providers/chutes": {
+      "types": "./dist/stt/providers/chutes.d.ts",
+      "import": "./dist/stt/providers/chutes.js"
     }
   },
   "files": [
     "bin",
     "dist",
+    "web/components",
     "web",
     "glasses",
     "stt",

@@ -70,6 +70,8 @@ export type { SectionHeaderProps } from './components/section-header';
 export { SettingsGroup } from './components/settings-group';
 export type { SettingsGroupProps } from './components/settings-group';
 
+export { ChutesSettings } from './components/chutes-settings';
+
 export { CategoryFilter } from './components/category-filter';
 export type { CategoryFilterProps } from './components/category-filter';
 
